@@ -1,0 +1,17 @@
+{
+  "name": "md-blog",
+  "version": "1.0.0",
+  "description": "blog api",
+  "main": "index.ts",
+  "repository": "https://github.com/hameedhub/md-blog.git",
+  "author": "Hameed Abdulrahaman <hameedabdulrahamann@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts"
+  },
+
+  "devDependencies": {
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.2.2"
+  }
+}
