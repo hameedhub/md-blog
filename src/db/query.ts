@@ -18,7 +18,8 @@ export default class Query {
       );
       return response[0].insertId;
     } catch (error: any) {
-      throw error.message;
+      console.log(error);
+      throw error;
     }
   }
   async select(parameter: any[], constraint: any[]): Promise<any> {
