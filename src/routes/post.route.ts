@@ -1,15 +1,25 @@
 import express from "express";
 import PostController from "../controllers/post.controller";
-import validate, { validator } from "../validation/validator";
-import { createPostSchema, IdSchema, updatePostSchema } from "../validation/schemas";
+import { validator } from "../validation/validator";
+import {
+  createPostSchema,
+  IdSchema,
+  updatePostSchema,
+} from "../validation/schemas";
 
-const { create, index, show, update } = PostController;
+const { create, index, show, update, remove } = PostController;
 
 const router = express.Router();
 
 router.post("/", validator(createPostSchema), create);
 router.get("/", index);
 router.get("/:id", validator(IdSchema, "params"), show);
-router.patch('/:id', validator(IdSchema,  "params"), validator(updatePostSchema, 'body'), update )
+router.patch(
+  "/:id",
+  validator(IdSchema, "params"),
+  validator(updatePostSchema, "body"),
+  update
+);
+router.delete("/:id", validator(IdSchema, "params"), remove);
 
 export default router;
