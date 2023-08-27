@@ -1,0 +1,176 @@
+swagger: "2.0"
+info:
+  title: My API
+  version: 1.0.0
+basePath: /api/v1
+paths:
+  /auth/signup:
+    post:
+      summary: Signup a new user
+      parameters:
+      - in: body
+        name: user
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        201:
+          description: User created successfully
+          schema:
+            $ref: "#/definitions/User"
+        400:
+          description: Bad request
+
+  /auth/login:
+    post:
+      summary: Login with user credentials
+      parameters:
+      - in: body
+        name: credentials
+        schema:
+          $ref: "#/definitions/LoginCredentials"
+      responses:
+        200:
+          description: Successful login
+          schema:
+            $ref: "#/definitions/AuthResponse"
+        401:
+          description: Unauthorized
+
+  /posts:
+    get:
+      summary: Get all posts
+      responses:
+        200:
+          description: Successful retrieval of posts
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Post"
+    post:
+      summary: Create a new post
+      parameters:
+      - in: header
+        name: Authorization
+        description: Bearer token
+        required: true
+        type: string
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzMsImlhdCI6MTY5MzEyOTY4NH0.POIhvQaYKJAkJppJS8CAqJaQxkLA7QRSUlpyczcpLR4
+      - in: body
+        name: post
+        schema:
+          $ref: "#/definitions/Post"
+      responses:
+        201:
+          description: Post created successfully
+
+  /posts/{postId}:
+    get:
+      summary: Get a specific post by ID
+      parameters:
+      - name: postId
+        in: path
+        required: true
+        type: integer
+      responses:
+        200:
+          description: Successful retrieval of the post
+          schema:
+            $ref: "#/definitions/Post"
+        404:
+          description: Post not found
+    patch:
+      summary: Update a post
+      parameters:
+      - in: header
+        name: Authorization
+        description: Bearer token
+        required: true
+        type: string
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzMsImlhdCI6MTY5MzEyOTY4NH0.POIhvQaYKJAkJppJS8CAqJaQxkLA7QRSUlpyczcpLR4
+      - in: path
+        name: postId
+        description: ID of the post to update
+        required: true
+        type: integer
+      - in: body
+        name: post
+        schema:
+          $ref: "#/definitions/Post"
+      responses:
+        200:
+          description: Post updated successfully
+
+    delete:
+      summary: Delete a post
+      parameters:
+      - in: header
+        name: Authorization
+        description: Bearer token
+        required: true
+        type: string
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzMsImlhdCI6MTY5MzEyOTY4NH0.POIhvQaYKJAkJppJS8CAqJaQxkLA7QRSUlpyczcpLR4
+      - in: path
+        name: postId
+        description: ID of the post to delete
+        required: true
+        type: integer
+      responses:
+        200:
+          description: Post deleted successfully
+definitions:
+  User:
+    type: object
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+    example:
+      first_name: John
+      last_name: Doe
+      email: john.doe@example.com
+      password: password123
+  LoginCredentials:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    example:
+      email: john.doe@example.com
+      password: password123
+  AuthResponse:
+    type: object
+    properties:
+      token:
+        type: string
+  Post:
+    type: object
+    properties:
+      user_id:
+        type: integer
+      title:
+        type: string
+      summary:
+        type: string
+      content:
+        type: string
+      author_name:
+        type: string
+      published:
+        type: boolean
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time
+    example:
+      title: My Post
+      summary: Summary of my post
+      content: Content of my post

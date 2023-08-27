@@ -15,7 +15,6 @@ export const loginSchema = Joi.object<User>({
 });
 
 export const createPostSchema = Joi.object<Post>({
-  user_id:  Joi.number().required(),
   title: Joi.string().trim().min(5).required(),
   summary: Joi.string().trim().min(10).required(),
   content: Joi.string().trim().min(10).required(),
