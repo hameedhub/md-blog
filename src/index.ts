@@ -1,7 +1,10 @@
 import express, { NextFunction, Request, Response } from "express";
 import swaggerUi from "swagger-ui-express";
+import YAML from 'yamljs';
 import router from "./routes";
 
+
+const swaggerDocument = YAML.load(`${process.cwd()}/public/swagger.yaml`);
 const app = express();
 
 app.use(express.json());
@@ -14,11 +17,7 @@ app.get("/", (req: Request, res: Response) =>
 app.use(
   "/docs",
   swaggerUi.serve,
-  swaggerUi.setup(undefined, {
-    swaggerOptions: {
-      url: "/swagger.json",
-    },
-  })
+  swaggerUi.setup(swaggerDocument)
 );
 app.use((req: Request, res: Response, next: NextFunction) => {
   const err = new Error("Not Found") as any;

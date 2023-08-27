@@ -6,7 +6,7 @@ import {
   IdSchema,
   updatePostSchema,
 } from "../validation/schemas";
-import middlewares from '../middlewares'
+import middlewares from "../middlewares";
 
 const { auth } = middlewares;
 
@@ -14,11 +14,12 @@ const { create, index, show, update, remove } = PostController;
 
 const router = express.Router();
 
-router.post("/", validator(createPostSchema), create);
+router.post("/", auth, validator(createPostSchema), create);
 router.get("/", index);
 router.get("/:id", validator(IdSchema, "params"), show);
 router.patch(
   "/:id",
+  auth,
   validator(IdSchema, "params"),
   validator(updatePostSchema, "body"),
   update

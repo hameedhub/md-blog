@@ -1,12 +1,13 @@
 import Post from "../models/post.model";
 import Query from "../db/query";
+import { number } from "joi";
 
 const posts = new Query("posts");
 const users = new Query("users");
 
 export default class PostService {
-  static async create(post: Post) {
-    const checkUser = await users.select(["*"], [`id='${post.user_id}'`]);
+  static async create(post: Post, userId: number) {
+    const checkUser = await users.select(["*"], [`id='${userId}'`]);
     if (checkUser.length === 0) throw new Error(`The account not found`);
 
     const checkPost = await posts.select(
@@ -15,11 +16,13 @@ export default class PostService {
     );
     if (checkPost[0]) throw new Error(`Post title already exists`);
 
+    post.user_id = userId
+
     const result: number = await posts.insert(Object.keys(post), [
-      post.user_id,
       post.title,
       post.summary,
       post.content,
+      post.user_id,
     ]);
 
     return PostService.show(result);
@@ -52,9 +55,13 @@ export default class PostService {
     if (post.length === 0) throw new Error("Post not found");
     return post;
   }
-  static async update(postId: number, post: Post) {
-    const checkPost = await posts.select(["*"], [`id=${postId}`]);
-    if (checkPost.length === 0) throw new Error("Post not found");
+  static async update(postId: number, post: Post, userId: number) {
+    const checkPost = await posts.select(
+      ["*"],
+      [`id=${postId} AND user_id=${userId}`]
+    );
+    if (checkPost.length === 0)
+      throw new Error("Post not found or not your post");
 
     const { created_at, updated_at, id, user_id, ...updatePost } = post;
     const result = await posts.update(updatePost, [`id=${postId}`]);
