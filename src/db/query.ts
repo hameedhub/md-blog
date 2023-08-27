@@ -96,4 +96,12 @@ export default class Query {
       return error;
     }
   }
+  async delete(constraint: string[]) : Promise<any>{
+    try {
+        const response = await this.pool.query(`DELETE FROM ${this.table} WHERE ${constraint}`);
+        return response;
+    } catch (error) {
+        return error;
+    }
+}
 }

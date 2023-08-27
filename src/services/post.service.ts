@@ -57,10 +57,20 @@ export default class PostService {
     if (checkPost.length === 0) throw new Error("Post not found");
 
     const { created_at, updated_at, id, user_id, ...updatePost } = post;
-
     const result = await posts.update(updatePost, [`id=${postId}`]);
+
     if (result.affectedRows === 1) {
       return PostService.show(postId);
+    }
+    throw new Error("Unable to update post");
+  }
+  static async remove(postId: number) {
+    const checkPost = await posts.select(["*"], [`id=${postId}`]);
+    if (checkPost.length === 0) throw new Error("Post not found");
+
+    const result = await posts.delete([`id=${postId}`]);
+    if (result.affectedRows === 1) {
+      return true;
     }
     throw new Error("Unable to update post");
   }
