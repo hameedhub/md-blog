@@ -2,6 +2,9 @@ import express, { NextFunction, Request, Response } from "express";
 import swaggerUi from "swagger-ui-express";
 import YAML from 'yamljs';
 import router from "./routes";
+import ResponseUtil from "./utils/response.util";
+
+const { badRequest } = ResponseUtil
 
 
 const swaggerDocument = YAML.load(`${process.cwd()}/public/swagger.yaml`);
@@ -26,7 +29,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
-  res.status(err.status).json(err.message);
+  badRequest(res, err.message, err.status)
   next();
 });
 
