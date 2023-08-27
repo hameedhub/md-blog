@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from "express";
 import swaggerUi from "swagger-ui-express";
 import YAML from 'yamljs';
+import awsServerlessExpress from 'aws-serverless-express';
 import router from "./routes";
 import ResponseUtil from "./utils/response.util";
 
@@ -33,4 +34,9 @@ app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-export default app;
+const server = awsServerlessExpress.createServer(app);
+
+// Lambda handler function
+export const handler = (event: any, context: any) => {
+  awsServerlessExpress.proxy(server, event, context);
+};
