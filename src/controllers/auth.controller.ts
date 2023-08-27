@@ -1,7 +1,6 @@
 import { Response, Request } from "express";
 import Service from "../services/auth.service";
 import User from "../models/user.model";
-import { Route, Post, Example } from "tsoa";
 
 const { signup, login } = Service;
 
