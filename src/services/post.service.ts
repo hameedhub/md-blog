@@ -64,14 +64,18 @@ export default class PostService {
     }
     throw new Error("Unable to update post");
   }
-  static async remove(postId: number) {
-    const checkPost = await posts.select(["*"], [`id=${postId}`]);
-    if (checkPost.length === 0) throw new Error("Post not found");
+  static async remove(postId: number, userId: number) {
+    const checkPost = await posts.select(
+      ["*"],
+      [`id=${postId} AND user_id=${userId}`]
+    );
+    if (checkPost.length === 0)
+      throw new Error("Post not found or not your post");
 
     const result = await posts.delete([`id=${postId}`]);
     if (result.affectedRows === 1) {
-      return true;
+      return "Post deleted";
     }
-    throw new Error("Unable to update post");
+    throw new Error("Unable to delete post");
   }
 }

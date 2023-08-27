@@ -6,6 +6,9 @@ import {
   IdSchema,
   updatePostSchema,
 } from "../validation/schemas";
+import middlewares from '../middlewares'
+
+const { auth } = middlewares;
 
 const { create, index, show, update, remove } = PostController;
 
@@ -20,6 +23,6 @@ router.patch(
   validator(updatePostSchema, "body"),
   update
 );
-router.delete("/:id", validator(IdSchema, "params"), remove);
+router.delete("/:id", auth, validator(IdSchema, "params"), remove);
 
 export default router;

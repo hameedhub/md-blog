@@ -40,7 +40,8 @@ export default class PostController {
   }
   static async remove(req: Request, res: Response) {
     try {
-      const data = await remove(parseInt(req.params.id));
+      
+      const data = await remove(parseInt(req.params.id), req.user.id);
       return res.status(200).json(data);
     } catch (error: any) {
       res.status(500).json(error.message);
