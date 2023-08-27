@@ -22,15 +22,46 @@ export default class PostService {
       post.content,
     ]);
 
-    const newPost = await posts.select(["*"], [`id= ${result}`]);
-    return newPost[0];
+    return PostService.show(result);
   }
   static async index(): Promise<Post[]> {
-    return await posts.selectAll();
+    return await posts.selectAll(
+      [
+        "posts.*",
+        `CONCAT(users.first_name,' ', users.last_name) as author_name`,
+      ],
+      "posts.id",
+      "DESC",
+      20,
+      "users",
+      "posts.user_id = users.id",
+      "LEFT"
+    );
   }
   static async show(postId: number): Promise<Post> {
-    const post = await posts.select(["*"], [`id=${postId}`]);
+    const post = await posts.select(
+      [
+        "posts.*",
+        `CONCAT(users.first_name,' ', users.last_name) as author_name`,
+      ],
+      [`posts.id=${postId}`],
+      "users",
+      "posts.user_id = users.id",
+      "LEFT"
+    );
     if (post.length === 0) throw new Error("Post not found");
     return post;
+  }
+  static async update(postId: number, post: Post) {
+    const checkPost = await posts.select(["*"], [`id=${postId}`]);
+    if (checkPost.length === 0) throw new Error("Post not found");
+
+    const { created_at, updated_at, id, user_id, ...updatePost } = post;
+
+    const result = await posts.update(updatePost, [`id=${postId}`]);
+    if (result.affectedRows === 1) {
+      return PostService.show(postId);
+    }
+    throw new Error("Unable to update post");
   }
 }

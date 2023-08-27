@@ -24,3 +24,10 @@ export const createPostSchema = Joi.object<Post>({
 export const IdSchema = Joi.object({
   id: Joi.number().integer().min(1).required(),
 })
+
+export const updatePostSchema = Joi.object<Post>({
+  title: Joi.string().trim().min(5),
+  summary: Joi.string().trim().min(10),
+  content: Joi.string().trim().min(10),
+  published: Joi.number().min(0).max(1)
+});

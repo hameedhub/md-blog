@@ -9,6 +9,17 @@ export default class Query {
     this.pool = pool;
     this.table = table;
   }
+  private buildJoinClause(
+    joinTable: string | null,
+    joinCondition: string,
+    joinType: string
+  ): string {
+    if (joinTable && joinCondition) {
+      return ` ${joinType} JOIN ${joinTable} ON ${joinCondition}`;
+    }
+    return "";
+  }
+
   async insert(keys: any[], values: any[]): Promise<number> {
     try {
       const response = await this.pool.query<ResultSetHeader>(
@@ -22,11 +33,20 @@ export default class Query {
       throw error;
     }
   }
-  async select(parameter: string[], constraint: string[]): Promise<any> {
+  async select(
+    parameter: string[],
+    constraint: string[],
+    joinTable: string | null = null,
+    joinCondition: string = "",
+    joinType: string = "LEFT"
+  ): Promise<any> {
     try {
-      const response = await this.pool.query<ResultSetHeader>(
-        `SELECT ${parameter} FROM ${this.table} WHERE ${constraint}`
-      );
+      let query = `SELECT ${parameter} FROM ${this.table} `;
+
+      query += this.buildJoinClause(joinTable, joinCondition, joinType);
+      query += ` WHERE ${constraint}`;
+
+      const response = await this.pool.query<ResultSetHeader>(query);
       return response[0];
     } catch (error) {
       return error;
@@ -40,10 +60,15 @@ export default class Query {
       return error;
     }
   }
-  async update(values: any[], constraint: any[]): Promise<any> {
+  async update(
+    values: Record<string, any>,
+    constraint: string[]
+  ): Promise<any> {
     try {
       const response = await this.pool.query<ResultSetHeader>(
-        `UPDATE ${this.table} SET ${values} WHERE ${constraint}`
+        `UPDATE ${this.table} SET ${Object.keys(values)
+          .map((key) => `${key} = '${values[key]}'`)
+          .join(", ")} WHERE ${constraint}`
       );
       return response[0];
     } catch (error) {
@@ -53,12 +78,19 @@ export default class Query {
   async selectAll(
     parameter: string[] = [`*`],
     orderBy: string = "id",
-    orderPattern: string = "DESC", limit: number= 10
+    orderPattern: string = "DESC",
+    limit: number = 10,
+    joinTable: string | null = null,
+    joinCondition: string = "",
+    joinType: string = "LEFT"
   ): Promise<any> {
     try {
-      const response = await this.pool.query<ResultSetHeader>(
-        `SELECT ${parameter} FROM ${this.table} ORDER BY  ${orderBy} ${orderPattern} LIMIT ${limit}`
-      );
+      let query = `SELECT ${parameter} FROM ${this.table}`;
+
+      query += this.buildJoinClause(joinTable, joinCondition, joinType);
+      query += ` ORDER BY ${orderBy} ${orderPattern} LIMIT ${limit}`;
+
+      const response = await this.pool.query(query);
       return response[0];
     } catch (error) {
       return error;
