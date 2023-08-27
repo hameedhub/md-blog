@@ -39,4 +39,14 @@ export default class Query {
       return error;
     }
   }
+  async update(values: any[], constraint: any[]): Promise<any> {
+    try {
+      const response = await this.pool.query<ResultSetHeader>(
+        `UPDATE ${this.table} SET ${values} WHERE ${constraint}`
+      );
+      return response[0];
+    } catch (error) {
+      return error;
+    }
+  }
 }
