@@ -1,8 +1,14 @@
+import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
 import User from "../models/user.model";
 import bcrypt from "bcrypt";
 import Query from "../db/query";
 
 const users = new Query("users");
+
+dotenv.config();
+
+const jwtSecret: string = process.env.JWTSECRET ?? "secret";
 
 export default class AuthService {
   static async signup(user: User) {
@@ -18,7 +24,10 @@ export default class AuthService {
     const newUser = await users.select(["*"], [`id= ${result}`]);
 
     if (!newUser[0]) throw new Error("Failed to retrieve user after signup.");
-    return newUser[0];
+
+    const token = jwt.sign({ id: result }, jwtSecret);
+
+    return { token, ...newUser[0] };
   }
   static async login(email: string, password: string) {
     const result = await users.select(["*"], [`email='${email}'`]);
@@ -29,6 +38,8 @@ export default class AuthService {
 
     if (!isValidPassword) throw new Error(`Invalid login credentials`);
 
-    return result[0];
+    const token = jwt.sign({ id: result[0].id }, jwtSecret);
+
+    return { token, ...result[0] };
   }
 }
