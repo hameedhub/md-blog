@@ -22,7 +22,7 @@ export default class Query {
       throw error;
     }
   }
-  async select(parameter: any[], constraint: any[]): Promise<any> {
+  async select(parameter: string[], constraint: string[]): Promise<any> {
     try {
       const response = await this.pool.query<ResultSetHeader>(
         `SELECT ${parameter} FROM ${this.table} WHERE ${constraint}`
@@ -44,6 +44,20 @@ export default class Query {
     try {
       const response = await this.pool.query<ResultSetHeader>(
         `UPDATE ${this.table} SET ${values} WHERE ${constraint}`
+      );
+      return response[0];
+    } catch (error) {
+      return error;
+    }
+  }
+  async selectAll(
+    parameter: string[] = [`*`],
+    orderBy: string = "id",
+    orderPattern: string = "DESC", limit: number= 10
+  ): Promise<any> {
+    try {
+      const response = await this.pool.query<ResultSetHeader>(
+        `SELECT ${parameter} FROM ${this.table} ORDER BY  ${orderBy} ${orderPattern} LIMIT ${limit}`
       );
       return response[0];
     } catch (error) {
