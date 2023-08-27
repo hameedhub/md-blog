@@ -18,7 +18,7 @@ jobs:
       run: yarn build
 
     - name: Copy package.json and package-lock.json
-      run: cp src/package*.json dist/
+      run: cp package.json dist/
 
     - name: Install production dependencies
       working-directory: ./dist
