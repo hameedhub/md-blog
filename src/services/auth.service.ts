@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import User from "../models/user.model";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import Query from "../db/query";
 
 const users = new Query("users");

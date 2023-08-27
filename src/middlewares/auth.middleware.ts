@@ -1,5 +1,8 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
+import ResponseUtil from "../utils/response.util";
+
+const { badRequest } = ResponseUtil
 
 const jwtSecret: string = process.env.JWTSECRET ?? "secret";
 
@@ -13,13 +16,13 @@ declare global {
 
 export default async (req: Request, res: Response, next: NextFunction) => {
   const token = req.header("token") || req.header("Authorization");
-  if (!token) return res.status(401).json("Access Denied, No token provided");
+  if (!token) return badRequest(res, "Access Denied, No token provided", 401);
   try {
     const payload = jwt.verify(token, jwtSecret);
 
     req.user = payload;
     next();
   } catch (error) {
-    return res.status(401).json("Access Denied, Invalid token");
+    return badRequest(res, "Access Denied, Invalid token", 401);
   }
 };
