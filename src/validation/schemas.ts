@@ -20,3 +20,7 @@ export const createPostSchema = Joi.object<Post>({
   summary: Joi.string().trim().min(10).required(),
   content: Joi.string().trim().min(10).required(),
 });
+
+export const IdSchema = Joi.object({
+  id: Joi.number().integer().min(1).required(),
+})
