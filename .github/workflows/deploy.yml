@@ -8,31 +8,34 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v2
+      - name: Checkout Code
+        uses: actions/checkout@v2
 
-    - name: Install Dependencies
-      run: yarn
+      - name: Install Dependencies
+        run: yarn
 
-    - name: Build
-      run: yarn build
+      - name: Build
+        run: yarn build
 
-    - name: Copy package.json and package-lock.json
-      run: cp package.json dist/
+      - name: List Contents of dist
+        run: ls -la dist
 
-    - name: Install production dependencies
-      working-directory: ./dist
-      run: npm install --only=production
+      - name: Copy package.json and package-lock.json
+        run: cp package.json dist/
 
-    - name: Zip the built files
-      run: zip -r dist.zip dist
+      - name: Install dependencies
+        working-directory: ./dist
+        run: npm install
 
-    - name: Configure AWS credentials
-      run: |
-        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws configure set default.region us-east-1
+      - name: Zip the built files
+        run: zip -r dist.zip dist
 
-    - name: Deploy to Lambda
-      run: |
-        aws lambda update-function-code --function-name YourLambdaFunctionName --zip-file fileb://dist.zip
+      - name: Configure AWS credentials
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set default.region us-east-1
+
+      - name: Deploy to Lambda
+        run: |
+          aws lambda update-function-code --function-name mb-log-fun --zip-file fileb://dist.zip
