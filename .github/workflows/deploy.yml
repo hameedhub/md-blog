@@ -38,4 +38,4 @@ jobs:
 
       - name: Deploy to Lambda
         run: |
-          aws lambda update-function-code --function-name mb-log-fun --zip-file fileb://dist.zip
+          aws lambda update-function-code --function-name nodejs-aws-lambda-dev-app --zip-file fileb://dist.zip
