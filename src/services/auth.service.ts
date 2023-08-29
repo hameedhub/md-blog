@@ -12,6 +12,10 @@ const jwtSecret: string = process.env.JWTSECRET ?? "secret";
 
 export default class AuthService {
   static async signup(user: User) {
+    const check = await users.select(["*"], [`email='${user.email}'`]);
+  
+    if (check[0]) throw new Error("Email already exist");
+
     const hashPassword = await bcrypt.hash(user.password, 8);
 
     const result: number = await users.insert(Object.keys(user), [

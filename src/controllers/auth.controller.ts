@@ -13,16 +13,16 @@ export default class AuthController {
       const data = await signup(userData);
       
       success(res, data, 201)
-    } catch (error) {
-      badRequest(res, error)
+    } catch (error: any) {
+      badRequest(res, error.message)
     }
   }
   static async login(req: Request, res: Response) {
     try {
       const data = await login(req.body.email, req.body.password);
       success(res, data, 200)
-    } catch (error) {
-      badRequest(res, error)
+    } catch (error: any) {
+      badRequest(res, error.message)
     }
   }
 }

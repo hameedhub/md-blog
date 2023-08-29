@@ -14,8 +14,8 @@ export default class PostController {
       const data = await create(req.body, req.user.id);
 
       success(res, data, 201)
-    } catch (error) {
-      badRequest(res, error)
+    } catch (error: any) {
+      badRequest(res, error.message)
     }
   
   }
@@ -23,8 +23,8 @@ export default class PostController {
     try {
       const data = await index();
       success(res, data, 200)
-    } catch (error) {
-      badRequest(res, error)
+    } catch (error: any) {
+      badRequest(res, error.message)
     }
   }
   static async show(req: Request, res: Response) {
